@@ -1,0 +1,44 @@
+debug: true
+
+
+spring:
+  aop:
+    proxy-target-class: true
+
+security:
+  user:
+    password: password
+  oauth2:
+    client:
+      accessTokenUri: http://localhost:9999/uaa/oauth/token
+      userAuthorizationUri: http://localhost:9999/uaa/oauth/authorize
+      clientId: acme
+      clientSecret: acmesecret
+    resource:
+      userInfoUri: http://localhost:9999/uaa/user
+
+zuul:
+  routes:
+    resource1:
+      path: /resource1/**
+      url: http://localhost:9000
+    resource2:
+      path: /resource2/**
+      url: http://localhost:9001
+    ui:
+      path: /ui/**
+      url: http://localhost:8080/ui
+    ui-admin:
+      path: /ui-admin/**
+      url: http://localhost:8081/ui-admin
+    user:
+      path: /user/**
+      url: http://localhost:9999/uaa/user
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
+server:
+  port: 8888
