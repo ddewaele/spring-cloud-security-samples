@@ -114,7 +114,21 @@ Authorization successful
 So the antMatchers work fine, and the protected.html can be seen by users with the proper role.
 
 
-When accessing the UI through the gateway, I get redirected to the authserver (expected) and when passing authentication with a user with ROLE_USER, but I get this:
+When accessing the UI through the gateway, I get redirected to the authserver (expected) and when passing authentication with a user with ROLE_USER, but I get this in the gateway logs :
+
+
+
+```
+2016-03-23 14:23:20.245 DEBUG 4194 --- [nio-8888-exec-3] o.s.s.w.a.i.FilterSecurityInterceptor    : Secure object: FilterInvocation: URL: /ui/protected.html; Attributes: [authenticated]
+2016-03-23 14:23:20.245 DEBUG 4194 --- [nio-8888-exec-3] o.s.s.w.a.i.FilterSecurityInterceptor    : Previously Authenticated: org.springframework.security.oauth2.provider.OAuth2Authentication@402417f1: Principal: user; Credentials: [PROTECTED]; Authenticated: true; Details: remoteAddress=0:0:0:0:0:0:0:1, sessionId=<SESSION>, tokenType=bearertokenValue=<TOKEN>; Granted Authorities: {authority=ROLE_USER}
+2016-03-23 14:23:20.245 DEBUG 4194 --- [nio-8888-exec-3] o.s.s.access.vote.AffirmativeBased       : Voter: org.springframework.security.web.access.expression.WebExpressionVoter@71da2205, returned: 1
+2016-03-23 14:23:20.245 DEBUG 4194 --- [nio-8888-exec-3] o.s.s.w.a.i.FilterSecurityInterceptor    : Authorization successful
+```
+
+So I am seeing the OAuth2Authentication here, but this is on the gateway level where it sees /ui/protected.html. I don't think the gateway is the place to define fine-grained access control for my UI. (I want to do that in the UI itself)
+
+
+However, In the UI logs (where I actually defined the authorization rules) I don't see the Oauth2Authentication anymore :
 
 ```
 Secure object: FilterInvocation: URL: /protected.html; Attributes: [hasRole('ROLE_USER')]
@@ -125,15 +139,7 @@ Access is denied (user is anonymous); redirecting to authentication entry point
 ```
 
 
-In the gateway logs I am seeing the OAuth2Authentication, but this is on the gateway level where it sees /ui/protected.html
 
-
-```
-2016-03-23 14:23:20.245 DEBUG 4194 --- [nio-8888-exec-3] o.s.s.w.a.i.FilterSecurityInterceptor    : Secure object: FilterInvocation: URL: /ui/protected.html; Attributes: [authenticated]
-2016-03-23 14:23:20.245 DEBUG 4194 --- [nio-8888-exec-3] o.s.s.w.a.i.FilterSecurityInterceptor    : Previously Authenticated: org.springframework.security.oauth2.provider.OAuth2Authentication@402417f1: Principal: user; Credentials: [PROTECTED]; Authenticated: true; Details: remoteAddress=0:0:0:0:0:0:0:1, sessionId=<SESSION>, tokenType=bearertokenValue=<TOKEN>; Granted Authorities: {authority=ROLE_USER}
-2016-03-23 14:23:20.245 DEBUG 4194 --- [nio-8888-exec-3] o.s.s.access.vote.AffirmativeBased       : Voter: org.springframework.security.web.access.expression.WebExpressionVoter@71da2205, returned: 1
-2016-03-23 14:23:20.245 DEBUG 4194 --- [nio-8888-exec-3] o.s.s.w.a.i.FilterSecurityInterceptor    : Authorization successful
-```
 
 So it is not able to access the protected resource. 
 
@@ -206,3 +212,9 @@ It is able to access the oauth2 protected /resource endpoint thorugh the gateway
 * Connection #0 to host localhost left intact
 {"id":"ec7d167d-53b7-457c-995f-63d13ab7dbd1","content":"Hello World from resource"}
 ```
+
+
+Some Questions :
+
+If I want SSO via the GW to all my resources / UIs, I only need to have EnableOAuth2Sso on the gateway ?
+My authorization rules can remain in the UIApplication ? These don't need to be moved to the gateway 
