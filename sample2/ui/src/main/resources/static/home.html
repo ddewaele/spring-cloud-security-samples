@@ -1,0 +1,10 @@
+<h1>Greeting</h1>
+<div ng-show="authenticated">
+	<p>The ID is {{controller.greeting.id}}</p>
+	<p>The User name is <strong>{{controller.user.principal.username}}</strong> with roles <strong>{{controller.user.principal.authorities}}</strong></p>
+	<p>The resposne from resource1 is {{controller.resource1}}</p>
+	<p>The resposne from resource2 is {{controller.resource2}}</p>
+</div>
+<div  ng-show="!authenticated">
+	<p>Login to see your greeting</p>
+</div>
