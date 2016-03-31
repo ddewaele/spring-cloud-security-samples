@@ -35,8 +35,8 @@ public class AuthserverApplication extends WebSecurityConfigurerAdapter {
 - Endpoint is used throughout the flow to validae the identifiy of the user
 - When /user is available, the system knows the user is logged in.
 
-```
-@RequestMapping("/user")
+```java
+	@RequestMapping("/user")
 	public SimpleUser user(Principal user) {
 		List<String> authorities = new ArrayList<>();
 
@@ -283,4 +283,22 @@ http://localhost:8888/ui/admin.html 	   (admin role required)
 - When users login, they need to authenticate and then get an authorization screen. In case of pure Auth2 SSO, is it possible to automatically authorize the user for a certain scope, so that they only see the login (authentication) page, and not the oauth2 authorization page
 - Spring uses the scope openid, is this somehow related to OpenID connect ?
 - How to do single sign out
+
+
+Sometimes zuul redirects back to the resource
+
+
+http://localhost:8888/planning-ui/				redirects to http://localhost:8800/planning/index.html
+
+http://localhost:8888/planning-ui/index.html    status at works fine
+
+Related to 
+
+ @Override
+ public void addViewControllers(ViewControllerRegistry registry) {
+    registry.addViewController("/").setViewName("redirect:/index.html");
+ }
+
+when ommitted, it stays at port 8888 but displays the http://localhost:8800/planning/ content ( = REST API)
+
 
