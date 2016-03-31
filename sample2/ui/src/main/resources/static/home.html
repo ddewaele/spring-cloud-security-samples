@@ -1,9 +1,16 @@
 <h1>Greeting</h1>
 <div ng-show="authenticated">
 	<p>The ID is {{controller.greeting.id}}</p>
-	<p>The User name is <strong>{{controller.user.principal.username}}</strong> with roles <strong>{{controller.user.principal.authorities}}</strong></p>
+	<p>The User name is <strong>{{controller.user.username}}</strong> with roles <strong>{{controller.user.authorities}}</strong></p>
 	<p>The resposne from resource1 is {{controller.resource1}}</p>
 	<p>The resposne from resource2 is {{controller.resource2}}</p>
+
+	<p>managerService = {{controller.managerService}}</p>
+	<p>adminService = {{controller.adminService}}</p>
+	<p>userService = {{controller.userService}}</p>
+	<p>publicService = {{controller.publicService}}</p>
+	<p>authenticatedService = {{controller.authenticatedService}}</p>
+
 </div>
 <div  ng-show="!authenticated">
 	<p>Login to see your greeting</p>

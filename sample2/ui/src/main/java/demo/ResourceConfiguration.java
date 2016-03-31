@@ -7,24 +7,17 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 
 @Configuration
 @EnableResourceServer
-public class ResourceConfiguration
-        extends ResourceServerConfigurerAdapter
+//@Import({ MethodSecurityConfiguration.class })
+public class ResourceConfiguration extends ResourceServerConfigurerAdapter
 {
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
-        // @formatter:off
         http
-                .authorizeRequests()
-                    .antMatchers("/login").permitAll()
-                    .antMatchers("/protected.html").hasRole("USER")
-                    .antMatchers("/admin.html").hasRole("ADMIN");
-//                    .and()
-//                .authorizeRequests()
-//                    .anyRequest()
-//                    .authenticated()
-//                    .and();
-
-        // @formatter:on
+            .authorizeRequests()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/protected.html").hasRole("USER")
+                .antMatchers("/admin.html").hasRole("ADMIN");
     }
+
 }

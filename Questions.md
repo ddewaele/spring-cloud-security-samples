@@ -1,6 +1,14 @@
-Questions.md
+#Questions.md
 
-The AuthorizationServer
+
+## The AuthorizationServer
+
+- Why am I still seeing the basic auth popup despite having http.formLogin() in the authServer
+- 
+
+
+
+There is a difference in behavior when extending WebSecurityConfigurerAdapter and when not.
 
 
 Without WebSecurityConfigurerAdapter
@@ -63,4 +71,3 @@ MacBook-Pro-3:authserver ddewaele$
 ```
 
 
-Why the difference ? What magic is going on ?

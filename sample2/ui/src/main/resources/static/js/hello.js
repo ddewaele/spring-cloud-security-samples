@@ -17,7 +17,7 @@ function($rootScope, $http, $location, $route) {
 	};
 
 	$http.get('/user').success(function(data) {
-		if (data.name) {
+		if (data.username) {
 			$rootScope.authenticated = true;
 		} else {
 			$rootScope.authenticated = false;
@@ -46,5 +46,36 @@ function($rootScope, $http, $location, $route) {
 	$http.get('/user/').success(function(data) {
 		self.user= data;
 	})
+
+	$http.get('/ui//uiservice/managerService').success(function(data) {
+		self.managerService= data;
+	}).error(function(data) {
+		self.managerService = data;
+	});
+
+	$http.get('/ui//uiservice/adminService').success(function(data) {
+		self.adminService= data;
+	}).error(function(data) {
+		self.adminService = data;
+	});
+
+	$http.get('/ui/uiservice/userService').success(function(data) {
+		self.userService= data;
+	}).error(function(data) {
+		self.userService = data;
+	});
+
+	$http.get('/ui/uiservice/publicService').success(function(data) {
+		self.publicService= data;
+	}).error(function(data) {
+		self.publicService = data;
+	});
+
+	$http.get('/ui/uiservice/authenticatedService').success(function(data) {
+		self.authenticatedService= data;
+	}).error(function(data) {
+		self.authenticatedService = data;
+	});
+
 
 });

@@ -25,15 +25,6 @@ public class UiApplication { //} extends WebSecurityConfigurerAdapter {
 		SpringApplication.run(UiApplication.class, args);
 	}
 
-//	@Autowired
-//	protected void registerGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//		auth
-//				.inMemoryAuthentication()
-//				.withUser("user").password("password").roles("USER").and()
-//				.withUser("admin").password("password").roles("USER", "ADMIN").and()
-//				.withUser("planner").password("password").roles("USER", "PLANNER");
-//	}
-
 	public void configure(HttpSecurity http) throws Exception {
 		http
 			.httpBasic()
@@ -42,7 +33,7 @@ public class UiApplication { //} extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				.antMatchers("/index.html", "/home.html", "/").permitAll()
 				.antMatchers("/protected.html").hasRole("USER")
-				.antMatchers("/admin.html").hasRole("ADMIN")
+				.antMatchers("/admin.html").hasRole("USER")
 				.anyRequest().authenticated()
 				.and()
 			.csrf()

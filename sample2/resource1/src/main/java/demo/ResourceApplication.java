@@ -7,15 +7,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @SpringBootApplication
 @RestController
 @EnableResourceServer
 public class ResourceApplication {
+
 	@RequestMapping("/")
-	public LinkedHashMap<String, String> home() {
-		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>(2);
+	public Map<String, String> home() {
+		Map<String, String> map = new LinkedHashMap<String, String>(2);
 		map.put("id", UUID.randomUUID().toString());
 		map.put("content", "Hello World from resource 1");
 		return map;
