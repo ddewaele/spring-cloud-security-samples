@@ -10,6 +10,7 @@
 
 	<modules>
 		<module>authserver</module>
+		<module>authserver-formlogin</module>
 		<module>gateway</module>
 		<module>ui</module>
 		<module>ui-admin</module>

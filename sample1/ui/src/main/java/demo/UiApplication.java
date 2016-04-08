@@ -28,6 +28,13 @@ public class UiApplication extends WebSecurityConfigurerAdapter {
 		SpringApplication.run(UiApplication.class, args);
 	}
 
+	/**
+	 *
+	 * It seems that this is not being picked up...... an authenticated user can see the admin role.
+	 *
+	 * @param http
+	 * @throws Exception
+     */
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http

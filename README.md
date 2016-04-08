@@ -10,15 +10,29 @@ A simple authserver / gateway / ui / resource pattern.
 - Both UIs and Resources are behind gateway.
 - Everything secured with Oauth2
 
-Doubt : When accessing the UI through the gateway (Zuul), I loose the authentication object somehow.
 
+| Tables        | Gateway URL                           | Actual URL                      | Comments                         |
+| ------------- | ------------------------------------- | ------------------------------- | -------------------------------- |
+| Auth          | http://localhost:9999/uaa             | N/A                             | Auth Server                      |
+| Gateway       | http://localhost:8888/                | N/A                             | Zuul Proxy gateway               |
+| Resource      | http://localhost:8888/resource/       | http://localhost:9000/resource/ | simple ui app with an index.html |
+| UI            | http://localhost:8888/ui/index.html   | http://localhost:9000/ui/       | simple ui app with an index.html |
+
+
+
+Doubts
+
+- Despite having ```.antMatchers("/index.html", "/home.html", "/").permitAll()``` in the UI, I'm getting redirected to uaa. Is this a filter order thing ?
+- Sometimes when accessing a URL through zuul (on port 8888) it redirects back to a url using the original port (ex: 8080). For example when
+accessing http://localhost:8888/ui ---> http://localhost:8080/ui (Full authentication is required to access this resource)
+- With the user endpoint on the uaa you cannot really do much. You should provide your own user endpoint.
 
 ## AuthServer
 
 As basic as can be. Acts as authorization server and resource server (for the user endpoint).
 
 
-```
+```java
 package demo;
 
 import org.springframework.boot.SpringApplication;
@@ -47,6 +61,13 @@ public class AuthserverApplication {
 
 }
 ```
+
+Default account :
+
+- username = user
+- password = password
+
+
 ## Gateway
 
 Again very simple. We configure it as a Zuul Proxy and we enable SSO via Oauth.
@@ -218,3 +239,11 @@ Some Questions :
 
 If I want SSO via the GW to all my resources / UIs, I only need to have EnableOAuth2Sso on the gateway ?
 My authorization rules can remain in the UIApplication ? These don't need to be moved to the gateway 
+
+
+
+
+
+# References
+
+https://github.com/spring-projects/spring-boot/issues/5482

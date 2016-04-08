@@ -6,7 +6,7 @@
 	<artifactId>pairs-oauth2-vanilla</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Spring Pairs Samples OAuth2 Vanilla</name>
+	<name>OAuth2 Vanilla Sample1</name>
 
 	<modules>
 		<module>authserver</module>
