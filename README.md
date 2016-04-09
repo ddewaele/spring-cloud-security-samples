@@ -17,7 +17,7 @@ A simple authserver / gateway / ui / resource pattern.
 | ------------- | ------------------------------------- | ------------------------------- | -------------------------------- |
 | Auth          | http://localhost:9999/uaa             | N/A                             | Auth Server                      |
 | Gateway       | http://localhost:8888/                | N/A                             | Zuul Proxy gateway               |
-| Resource      | http://localhost:8888/resource/       | http://localhost:9000/resource/ | simple ui app with an index.html |
+| Resource      | http://localhost:8888/                | http://localhost:9000/resource/ | simple ui app with an index.html |
 | UI            | http://localhost:8888/ui/index.html   | http://localhost:9000/ui/       | simple ui app with an index.html |
 
 
@@ -30,17 +30,6 @@ As basic as can be. Acts as authorization server and resource server (for the us
 
 
 ```java
-package demo;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
-
 @SpringBootApplication
 @RestController
 @EnableResourceServer
@@ -69,14 +58,7 @@ Default account :
 
 Again very simple. We configure it as a Zuul Proxy and we enable SSO via Oauth.
 
-```
-package demo;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-
+```java
 @SpringBootApplication
 @EnableZuulProxy
 @EnableOAuth2Sso
@@ -94,8 +76,9 @@ public class GatewayApplication {
 
 A simple spring boot application that exposes some URLs for different roles.
 
-```
+```java
 @SpringBootApplication
+@EnableResourceServer
 public class UiApplication extends WebSecurityConfigurerAdapter {
 
 	public static void main(String[] args) {
