@@ -10,6 +10,8 @@ A simple authserver / gateway / ui / resource pattern.
 - Both UIs and Resources are behind gateway.
 - Everything secured with Oauth2
 
+![](images/sample1.png)
+
 
 | Tables        | Gateway URL                           | Actual URL                      | Comments                         |
 | ------------- | ------------------------------------- | ------------------------------- | -------------------------------- |
@@ -20,11 +22,6 @@ A simple authserver / gateway / ui / resource pattern.
 
 
 
-Doubts
-
-- Despite having ```.antMatchers("/index.html", "/home.html", "/").permitAll()``` in the UI, I'm getting redirected to uaa. Is this a filter order thing ?
-- Sometimes when accessing a URL through zuul (on port 8888) it redirects back to a url using the original port (ex: 8080). For example when
-accessing http://localhost:8888/ui ---> http://localhost:8080/ui (Full authentication is required to access this resource)
 - With the user endpoint on the uaa you cannot really do much. You should provide your own user endpoint.
 
 ## AuthServer
