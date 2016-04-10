@@ -13,7 +13,7 @@ import java.security.Principal;
 @RestController
 @EnableResourceServer
 @EnableAuthorizationServer
-public class AuthserverApplication { //extends WebSecurityConfigurerAdapter {
+public class AuthserverApplication {
 
 	@RequestMapping("/user")
 	public Principal user(Principal user) {
@@ -23,14 +23,5 @@ public class AuthserverApplication { //extends WebSecurityConfigurerAdapter {
 	public static void main(String[] args) {
 		SpringApplication.run(AuthserverApplication.class, args);
 	}
-
-//	@Override
-//	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//		auth
-//				.inMemoryAuthentication()
-//				.withUser("user").password("password").roles("USER").and()
-//				.withUser("admin").password("password").roles("USER", "ADMIN").and()
-//				.withUser("planner").password("password").roles("USER", "PLANNER");
-//	}
 
 }

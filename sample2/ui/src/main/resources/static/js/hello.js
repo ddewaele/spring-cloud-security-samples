@@ -37,9 +37,18 @@ function($rootScope, $http, $location, $route) {
 
 }).controller('home', function($http) {
 	var self = this;
-	$http.get('/resource1/').success(function(data) {
+	$http.get('/resource1/greeting').success(function(data) {
 		self.resource1 = data;
 	})
+
+	$http.post('/resource1/greeting', {"id":"123","message":"Hello from AngularJS"}).then(
+		function() {
+			console.log("POST OK");
+		}, function () {
+			console.log("POST NOK");
+		}
+	);
+
 	$http.get('/resource2/').success(function(data) {
 		self.resource2 = data;
 	})

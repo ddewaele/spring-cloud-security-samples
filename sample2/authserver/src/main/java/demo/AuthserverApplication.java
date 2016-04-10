@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -18,11 +16,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+
+/**
+ *
+ * this auth server features
+ *
+ * - A custom user endpoint
+ * - 4 test users
+ *
+ */
 @SpringBootApplication
 @RestController
 @EnableResourceServer
 @EnableAuthorizationServer
-public class AuthserverApplication extends WebSecurityConfigurerAdapter {
+public class AuthserverApplication {
 
 
 	/**
@@ -72,26 +79,21 @@ public class AuthserverApplication extends WebSecurityConfigurerAdapter {
 		SpringApplication.run(AuthserverApplication.class, args);
 	}
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		// @formatter:off
-		http
-				.formLogin().loginPage("/login").permitAll()
-				.and()
-				.requestMatchers().antMatchers("/uaa/login", "/uaa/oauth/authorize", "/uaa/oauth/confirm_access")
-				.and()
-				.authorizeRequests().anyRequest().authenticated();
-		// @formatter:on
-	}
-
+	/**
+	 * Adding some user with different roles to test with.
+	 *
+	 * @param auth
+	 * @throws Exception
+     */
 	@Autowired
 	protected void registerGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth
 				.inMemoryAuthentication()
 				.withUser("user").password("password").roles("USER").and()
-				.withUser("admin").password("password").roles("USER", "ADMIN").and()
+				.withUser("admin").password("password").roles("ADMIN", "USER").and()
 				.withUser("manager").password("password").roles("MANAGER","USER").and()
-				.withUser("planner").password("password").roles("USER", "PLANNER");
+				.withUser("guest").password("password").roles("GUEST");
+
 	}
 
 }

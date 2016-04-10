@@ -5,10 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -23,7 +25,7 @@ import java.io.IOException;
 @SpringBootApplication
 @EnableZuulProxy
 @EnableOAuth2Sso
-public class GatewayApplication { //extends WebSecurityConfigurerAdapter {
+public class GatewayApplication extends WebSecurityConfigurerAdapter {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayApplication.class, args);
@@ -31,20 +33,30 @@ public class GatewayApplication { //extends WebSecurityConfigurerAdapter {
 
 	public void configure(HttpSecurity http) throws Exception {
 		http
-//			.httpBasic()
-			.antMatcher("/**")
-//				.and()
-				.authorizeRequests()
-				.antMatchers("/index.html", "/home.html", "/").permitAll()
-//				.antMatchers("/protected.html").hasRole("USER")
-//				.antMatchers("/admin.html").hasRole("ADMIN")
-//				.anyRequest().authenticated()
-				.and()
-				.csrf()
-				.csrfTokenRepository(csrfTokenRepository())
-				.and()
-				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
+				.antMatcher("/**").authorizeRequests()
+				//.antMatchers("/index.html", "/home.html", "/","/assets/**").permitAll()
+				.anyRequest().authenticated()
+				.and().csrf().csrfTokenRepository(csrfTokenRepository())
+				.and().addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
+				.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("http://localhost:9999/uaa/signout");
 	}
+
+//	public void configure(HttpSecurity http) throws Exception {
+//		http
+////			.httpBasic()
+//			.antMatcher("/**")
+////				.and()
+//				.authorizeRequests()
+//				.antMatchers("/index.html", "/home.html", "/").permitAll()
+////				.antMatchers("/protected.html").hasRole("USER")
+////				.antMatchers("/admin.html").hasRole("ADMIN")
+////				.anyRequest().authenticated()
+//				.and()
+//				.csrf()
+//				.csrfTokenRepository(csrfTokenRepository())
+//				.and()
+//				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
+//	}
 
 	private Filter csrfHeaderFilter() {
 		return new OncePerRequestFilter() {

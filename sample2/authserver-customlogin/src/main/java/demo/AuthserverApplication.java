@@ -15,39 +15,27 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- *
- * this auth server features
- *
- * - A custom user endpoint
- * - 4 test users
- * -
- */
 @SpringBootApplication
 @RestController
-@EnableAuthorizationServer
 @EnableResourceServer
-public class AuthserverApplication { //extends WebSecurityConfigurerAdapter {
+@EnableAuthorizationServer
+public class AuthserverApplication extends WebMvcConfigurerAdapter {
 
+//	@RequestMapping("/user")
+//	public Principal user(Principal user) {
+//		return user;
+//	}
 
-	/**
-	 *
-	 * Instead of returning the principal directly, we're returning a custom user object
-	 * that exposes the username and authorities list.
-	 *
-	 * This way we bypass the issue https://github.com/spring-projects/spring-boot/issues/5482
-	 *
-	 * @param user
-	 * @return
-     */
 	@RequestMapping("/user")
-	public SimpleUser user(Principal user) {
+	public SimpleUser user2(Principal user) {
 		List<String> authorities = new ArrayList<>();
 
 		//TODO: we should try to avoid casting like this.
@@ -79,10 +67,70 @@ public class AuthserverApplication { //extends WebSecurityConfigurerAdapter {
 		}
 	}
 
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/login").setViewName("login");
+		registry.addViewController("/oauth/confirm_access").setViewName("authorize");
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(AuthserverApplication.class, args);
 	}
 
+	@Configuration
+	@Order(-20)
+	protected static class LoginConfig extends WebSecurityConfigurerAdapter {
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			// @formatter:off
+			http
+					.formLogin()
+					.loginPage("/login").defaultSuccessUrl("http://localhost:8888/index.html").permitAll()
+					.and()
+					.logout()
+					.logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
+					.logoutSuccessUrl("/login")
+
+					//.and().logout().invalidateHttpSession(true).deleteCookies("JSESSION")
+					.and()
+					.requestMatchers()
+					.antMatchers("/","/login","/logout","/signout", "/oauth/authorize", "/oauth/confirm_access","/images/**")
+					.and()
+					.authorizeRequests().anyRequest().authenticated();
+			// @formatter:on
+		}
+
+	}
+
+
+
+
+
+//	Too many redirects
+//	@Configuration
+//	@Order(-20)
+//	protected static class LoginConfig extends WebSecurityConfigurerAdapter {
+//
+//		@Override
+//		public void configure(HttpSecurity http) throws Exception {
+//			http
+//					.formLogin()
+//					.loginPage("/login")
+//					.and()
+//					.requestMatchers()
+//					.antMatchers("/login","/signout", "/oauth/authorize", "/oauth/confirm_access")
+//					.and()
+//					.logout()
+//					.logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
+//					.logoutSuccessUrl("/login")
+//					.and()
+//					.authorizeRequests()
+//					.anyRequest()
+//					.authenticated();
+//		}
+//
+//	}
 
 	@Autowired
 	protected void registerGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -96,49 +144,4 @@ public class AuthserverApplication { //extends WebSecurityConfigurerAdapter {
 	}
 
 
-	/**
-	 *
-	 * As soon as you configure httpSecurity yourself, you will get an access denied on
-	 * http://localhost:9999/uaa/oauth/authorize?client_id=acme&redirect_uri=http://localhost:8888/login&response_type=code&state=dgrM6p
-	 *
-	 * So you need to provide a means of authentication the user.
-	 *
-	 * This can be done using basic authentication
-	 * 	http.httpBasic
-	 *
-	 * or through form based login.
-	 *  http.formLogin
-	 *
-	 *  This configuration also allows you to configure our logout.
-	 *  For example, if you want to expose a simple /singout GET url for logging out, you can do this.
-	 *
-	 *  .logout()
-	 *  .logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
-	 *  .logoutSuccessUrl("/login");
-	 *
-	 * Important to specify an order, otherwise the resourceserver will take over and you'll get an authorization error.
-	 *
-	 */
-	@Configuration
-	@Order(-20)
-	protected static class LoginConfig extends WebSecurityConfigurerAdapter {
-
-		@Override
-		public void configure(HttpSecurity http) throws Exception {
-			http
-					.formLogin()
-						.and()
-					.requestMatchers()
-						.antMatchers("/login","/signout", "/oauth/authorize", "/oauth/confirm_access")
-						.and()
-					.logout()
-						.logoutRequestMatcher(new AntPathRequestMatcher("/signout"))
-						.logoutSuccessUrl("/login")
-						.and()
-					.authorizeRequests()
-						.anyRequest()
-						.authenticated();
-		}
-
-	}
 }

@@ -4,12 +4,11 @@ spring:
   aop:
     proxy-target-class: true
 
-
 security:
-
   oauth2:
     resource:
       userInfoUri: http://localhost:9999/uaa/user
+
 logging:
   level:
     org.springframework.security: DEBUG
@@ -17,3 +16,4 @@ logging:
 
 server:
   context-path: /ui
+  use-forward-headers: true
