@@ -4,6 +4,7 @@ Here we're going to be extending our example a bit by
 - AuthServer : Controlling the login process (uses both default and both custom forms)
 - AuthServer / Gateway : Controlling the logout process
 - AuthServer / Gateway : Introducing POST requests (CSRF)
+- ResourceServer : server to server communication
 
 
 ## AuthServer
@@ -251,6 +252,122 @@ As you can see, after logging out to the getway, we redirect to a ```signout``` 
 ```
 
 
+
+
+## Server to server communication
+
+When ```resource2``` is trying to communicate with ```resource1```, it can do it in one of the following ways :
+
+
+## Bad way nr 1
+
+Trying to get the token using the ```SecurityContextHolder```
+
+```
+OAuth2Authentication auth =  (OAuth2Authentication)SecurityContextHolder.getContext().getAuthentication();
+OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) auth.getDetails();
+String token = details.getTokenValue();
+```
+
+Although this will work you need to understand the following :
+
+- Casting is never good, and there's a lot of casting here
+- Although this will get you a token, you need to understand that gateway protected resources won't access tokens. (only if you call them directly)
+
+
+## Bad way nr 2
+
+Attempting to retrieve the JSESSIONID and using that to access the protected resource via the Gateway.
+This works, but it involves extracting the JSESSIONID fromt he cookie
+
+```java
+@Autowired
+HttpServletRequest request;
+
+
+HttpClient httpClient = HttpClients.custom().build();
+RestTemplate restTemplate = new RestTemplate();
+HttpHeaders headers = new HttpHeaders();
+headers.add("Cookie","JSESSIONID " + extractJessionIdFromCookie());
+
+HttpEntity<String> requestEntity = new HttpEntity<String>("parameters", headers);
+ResponseEntity rssResponse = restTemplate.exchange(
+        constants.getMasterDataProperty("url"),
+        HttpMethod.GET,
+        requestEntity,
+        Map.class);
+
+Map tempMasterData = (Map)rssResponse.getBody();
+
+
+private String extractJessionIdFromCookie() {
+    for(Cookie cookie : request.getCookies()) {
+        if ("JSESSIONID".equals(cookie.getName())) {
+            return cookie.getValue();
+        }
+    }
+    return null;
+}
+
+```
+
+## Semi-Good way
+
+Using ```userInfoRestTemplate``` gives you easy access to the token.
+
+```java
+@Autowired
+private OAuth2RestTemplate userInfoRestTemplate;
+
+
+HttpClient httpClient = HttpClients.custom().build();
+RestTemplate restTemplate = new RestTemplate();
+HttpHeaders headers = new HttpHeaders();
+headers.add("Authorization","Bearer " + userInfoRestTemplate.getAccessToken());
+
+HttpEntity<String> requestEntity = new HttpEntity<String>("parameters", headers);
+ResponseEntity rssResponse = restTemplate.exchange(
+        RESOURCE_URL,
+        HttpMethod.GET,
+        requestEntity,
+        Map.class);
+
+Map tempMasterData = (Map)rssResponse.getBody();
+```
+
+But keep in mind, in order for this to work you need :
+
+- A valid user
+- An unsecured route on the gateway (as here the authorization will be done on the resource level (token) and not the gateway (JSESSIONID)).
+- This won't work with pure server-server communication where no user is involved.
+
+
+## Good way
+
+Using client credentials. 
+
+If you want to do more server-server communication, you're not really acting on behalf of a user, but you're acting on behalf of the server itself.
+For that client credentials are used.
+
+You can get an access token real easy like this :
+
+```
+curl acme:acmesecret@localhost:9999/oauth/token -d grant_type=client_credentials
+```
+
+It will return this :
+
+```
+{"access_token":"d7049fb3-738b-4e5d-8b66-1de4bf2add90","token_type":"bearer","expires_in":43199,"scope":"openid"}
+```
+
+You can then use it to access your resources.
+
+```
+curl -v -H "Authorization:Bearer d7049fb3-738b-4e5d-8b66-1de4bf2add90" http://localhost:8083/api/full_master_data
+```
+
+The client credentials are also useful for testing purposes as you don't need to go through the web flows.
 
 
 
