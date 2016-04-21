@@ -93,6 +93,7 @@ public class AuthserverApplication {
 		protected void configure(HttpSecurity http) throws Exception {
 					http
 					.formLogin()
+					//.httpBasic()
 					.and()
 					.requestMatchers()
 					.antMatchers("/login","/signout", "/oauth/authorize", "/oauth/confirm_access")

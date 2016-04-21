@@ -9,7 +9,7 @@ security:
 
   oauth2:
     resource:
-      userInfoUri: http://localhost:9999/uaa/user
+      userInfoUri: http://localhost:8888/uaa/user
   user:
     password: password
 logging:
