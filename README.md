@@ -138,4 +138,17 @@ My authorization rules can remain in the UIApplication ? These don't need to be 
 
 # References
 
-https://github.com/spring-projects/spring-boot/issues/5482
+- https://github.com/spring-projects/spring-boot/issues/5482
+- http://presos.dsyer.com/decks/oauth-rest.html
+- http://projects.spring.io/spring-security-oauth/docs/oauth2.html
+- https://spring.io/guides/tutorials/spring-boot-oauth2/
+- https://spring.io/blog/2013/07/11/spring-security-java-config-preview-readability/
+- https://raymondhlee.wordpress.com/2014/12/21/implementing-oauth2-with-spring-security/
+- https://raymondhlee.wordpress.com/2015/12/05/oauth2-authorization-server-with-spring-security/
+- http://cloud.spring.io/spring-cloud-netflix/spring-cloud-netflix.html
+- https://github.com/spring-cloud/spring-cloud-security/issues/94
+- https://github.com/leon/spring-oauth-social-microservice-starter
+- https://github.com/kakawait/uaa-behind-zuul-sample
+
+
+
